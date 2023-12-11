@@ -1,0 +1,41 @@
+name: Restart
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Decode AWS config
+      run: |
+        AWS_CONFIG=${{ secrets.AWS_CONFIG }}
+        mkdir ~/.aws
+
+        echo "$AWS_CONFIG" | base64 -d > ~/.aws/config
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip
+
+    - name: Install boto3
+      run: pip install boto3
+
+    - name: Restart the instance
+      run: python restart-lightsail-instance.py letters-alaniz-xyz
+
+    - name: Remove AWS config
+      if: ${{ always() }}
+      run: |
+        rm ~/.aws/config

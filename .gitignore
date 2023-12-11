@@ -1,0 +1,15 @@
+# Mac files
+.DS_Store
+
+# Ghost theme
+theme/node_modules
+theme/dist
+
+# Host access
+*.pem
+
+# AWS
+aws.config
+
+# Env
+.env
